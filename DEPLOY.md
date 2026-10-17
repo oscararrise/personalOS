@@ -17,12 +17,11 @@ Edita `.env` localmente sin compartir secretos. Para probar en el host Debian, c
 
 ```bash
 nano .env
-set -a; source .env; set +a
 cd backend
 python manage.py check
 python manage.py migrate
 python manage.py createsuperuser
-python manage.py runserver 127.0.0.1:8091
+DJANGO_DEBUG=true python manage.py runserver 127.0.0.1:8091
 ```
 
 `runserver` es exclusivamente para pruebas locales. Accede a `http://127.0.0.1:8091/admin/` desde túnel SSH si necesitas comprobar el login.
@@ -35,7 +34,9 @@ source .venv/bin/activate
 cd backend
 DATABASE_URL=sqlite:////tmp/personalos-tests.sqlite3 DJANGO_DEBUG=true python manage.py test
 ```
-El runner Django crea una base de pruebas temporal independiente.
+El runner Django crea una base de pruebas temporal independiente. La aplicación carga `.env` automáticamente mediante python-dotenv; no necesitas ejecutar `source .env`.
+
+**Nunca** uses `DJANGO_DEBUG=true` en producción, ni expongas `runserver` a la red.
 
 ## Pendiente para producción
 Antes de publicar: completar frontend y autenticación, HTTPS, Nginx, rate limiting, respaldos automáticos y configurar Gunicorn en systemd. No abras el puerto PostgreSQL 5432 a Internet.
